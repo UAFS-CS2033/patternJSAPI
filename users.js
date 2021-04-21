@@ -8,6 +8,28 @@ class Model{
         return users;
     }
 
+    async addUser(formData){
+        const formDataText = Object.fromEntries(formData.entries());
+        const formDataJSON = JSON.stringify(formDataText);
+        console.log(formDataJSON);
+
+        const fetchOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: formDataJSON
+        };
+
+        const response = await fetch('http://localhost/projects/patternJSAPI/api/addUser.php',fetchOptions);
+        const result = response.json();
+        console.log("result: "+result);
+        return result;
+    }
+
+
+
 }
 
 class View{
@@ -30,16 +52,26 @@ class View{
 class Controller{
 
    constructor(model,view){
-       this.model=model;
-       this.view=view;
-
-       this.button = document.getElementById('refresh');
-       this.button.addEventListener("click", ev => this.showUsers());
-       setInterval(ev => this.showUsers(),5000);
+        this.model=model;
+        this.view=view;
+        this.attachListeners();
    }
 
-   handler(){
-       this.showUsers();
+   attachListeners(){
+        const button = document.getElementById('refresh');
+        button.addEventListener("click", (event) => this.showUsers());
+        setInterval( (event) => this.showUsers(),5000);
+        const userform = document.getElementById('user-form');
+        userform.addEventListener('submit',(event) => this.handleFormSubmit(event));
+   }
+
+   async handleFormSubmit(event){
+        event.preventDefault();
+
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        console.log("FormData:" + formData);
+        const responseData = await this.model.addUser(formData);
    }
 
    async showUsers(){
@@ -51,20 +83,4 @@ class Controller{
 const controller = new Controller(new Model(),new View());
 controller.showUsers();
 
- 
-/*
-    register(){
-
-        let button = document.getElementById('refresh');
-        button.addEventListener("click",function(event){
-           getUsers();
-        });
-        
-        setInterval(function(){
-           getUsers();
-        },10000);
-        
-        }
-*/
-
-
+  

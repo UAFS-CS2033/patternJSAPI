@@ -1,13 +1,16 @@
-<?php 
+<?php
     include_once "../models/UserDAO.php";
-   
+
+    header("Content-Type: application/json");
+    $data = json_decode(file_get_contents("php://input"));
+    $data['userID']=null;
+    
     $user = new User();
-    $user->setUsername($_POST['username']);
-    $user->setEmail($_POST['email']);
-    $user->setPasswd($_POST['passwd']);
-    $user->setLastname($_POST['lastname']);
-    $user->setFirstname($_POST['firstname']);
-    $user->setUrole($_POST['urole']);
+    $user->load($data);
     $userDAO = new UserDAO();
     $userDAO->addUser($user);
+     
+    
+    echo json_encode($data);
+
 ?>
