@@ -1,4 +1,4 @@
-"usestrict";
+"use strict";
 
 class Model{
 
@@ -24,11 +24,8 @@ class Model{
 
         const response = await fetch('http://localhost/projects/patternJSAPI/api/addUser.php',fetchOptions);
         const result = response.json();
-        console.log("result: "+result);
         return result;
     }
-
-
 
 }
 
@@ -58,20 +55,26 @@ class Controller{
    }
 
    attachListeners(){
+       //Attach Listener to Refresh Button
         const button = document.getElementById('refresh');
         button.addEventListener("click", (event) => this.showUsers());
-        setInterval( (event) => this.showUsers(),5000);
+        
+        //Attach Listener to Form Submission
         const userform = document.getElementById('user-form');
-        userform.addEventListener('submit',(event) => this.handleFormSubmit(event));
+        userform.addEventListener('submit',(event) => this.handlerAddForm(event));
+
+        //Timed Refresh Users Table
+        setInterval( (event) => this.showUsers(),5000);
    }
 
-   async handleFormSubmit(event){
-        event.preventDefault();
+   async handlerAddForm(event){
+        event.preventDefault();  //Prevent Normal HTTP Form Submisson and Page Refresh
 
         const form = event.currentTarget;
         const formData = new FormData(form);
         console.log("FormData:" + formData);
         const responseData = await this.model.addUser(formData);
+        form.reset();
    }
 
    async showUsers(){

@@ -17,8 +17,10 @@
             $stmt = $connection->prepare("INSERT INTO users (username, lastname, firstname, email, passwd, urole) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("ssssss", $user->getUsername(), $user->getLastname(), $user->getFirstname(), $user->getEmail(), $user->getPasswd(), $user->getUrole());
             $stmt->execute();
+            $id = mysqli_insert_id($connection);
             $stmt->close();
             $connection->close();
+            return $id;
         }
 
         public function deleteUser($userid){
